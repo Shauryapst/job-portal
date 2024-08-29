@@ -1,11 +1,12 @@
-import { Button } from "@/components/ui/button";
+
 import Image from "next/image";
 import Link from "next/link";
+import { auth } from "@/auth";
 
-export default function Home() {
+export default async function Home() {
   return (
     <main className="h-screen">
-     asdf
+     
     </main>
   );
 }

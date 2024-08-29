@@ -19,20 +19,18 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    
     return (
         <html lang="en">
             <body className={inter.className}>
                 <AntdRegistry>
-                    <div className="h-screen bg-black">
-                        <Layout>
+                    <div className="flex flex-col h-screen bg-black">
+                        <Layout className="flex-1">
                             <Header className="sticky top-0 z-10 w-full bg-white text-black flex items-center">
-                                <Navbar/>
+                                <Navbar />
                             </Header>
-                            <Content>{children}</Content>
-                            <Footer className="bg-gray-800 text-white">
-                                Footer
-                            </Footer>
+                            <Content className="flex-1 overflow-y-auto bg-black">
+                                {children}
+                            </Content>
                         </Layout>
                     </div>
                 </AntdRegistry>

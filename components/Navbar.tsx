@@ -1,14 +1,13 @@
-"use client";
 import React from "react";
 import Link from "next/link";
 import { Menu, Avatar } from "antd";
 import { UserOutlined } from "@ant-design/icons";
-import { signOut } from "@/auth";
+import { auth } from "@/auth";
 
 const navitems = [
     {
         key: "dashboard",
-        label : <Link href="/">Dashboard</Link>,
+        label: <Link href="/">Dashboard</Link>,
     },
     {
         label: "Jobs",
@@ -41,10 +40,11 @@ const navitems = [
     },
 ];
 
-export default function Navbar() {
+export default async function Navbar() {
+    const session = await auth();
+
     return (
         <>
-        
             <Menu
                 theme="dark"
                 mode="horizontal"
@@ -56,42 +56,32 @@ export default function Navbar() {
                 }}
             />
 
-            <Menu
-                theme="dark"
-                mode="horizontal"
-                defaultSelectedKeys={["2"]}
-                items={[
-                    {
-                        label: (
-                            <Avatar
-                                onClick={() => {}}
-                                icon={<UserOutlined />}
-                            />
-                        ),
-                        key: "profile",
-                        children: [
-                            {
-                                type: "group",
+            {session && (
+                <Menu
+                    theme="dark"
+                    mode="horizontal"
+                    defaultSelectedKeys={["2"]}
+                    items={[
+                        {
+                            label: <Avatar icon={<UserOutlined />} />,
+                            key: "profile",
+                            children: [
+                                {
+                                    type: "group",
 
-                                label: <Link href="/profile">Profile</Link>,
-                            },
-                            {
-                                type: "group",
-                                label: (
-                                    <a
-                                        onClick={ async () => {
-                                            console.log("lol")
-                                            await signOut();
-                                        }}
-                                    >
-                                        Sign Out
-                                    </a>
-                                ),
-                            },
-                        ],
-                    },
-                ]}
-            />
+                                    label: <Link href="/profile">Profile</Link>,
+                                },
+                                {
+                                    type: "group",
+                                    label: (
+                                        <Link href="/signout">Sign Out</Link>
+                                    ),
+                                },
+                            ],
+                        },
+                    ]}
+                />
+            )}
 
             {/* <Badge count={5}>
                 {" "}

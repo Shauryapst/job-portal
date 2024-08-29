@@ -1,3 +1,17 @@
+"use client";
+
+import { signOut } from "next-auth/react";
+import { useEffect } from "react";
+
 export default function Page() {
-  return <h1>Welcome to page!</h1>;
+    const handleSignOut = async () => {
+        await signOut();
+    };
+
+    useEffect(() => {
+        handleSignOut();
+    }, []);
+
+    // Return null since there's no UI to render
+    return null;
 }
