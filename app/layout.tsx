@@ -23,12 +23,12 @@ export default function RootLayout({
         <html lang="en">
             <body className={inter.className}>
                 <AntdRegistry>
-                    <div className="flex flex-col h-screen bg-black">
+                    <div className="flex flex-col h-screen">
                         <Layout className="flex-1">
                             <Header className="sticky top-0 z-10 w-full bg-white text-black flex items-center">
                                 <Navbar />
                             </Header>
-                            <Content className="flex-1 overflow-y-auto bg-black">
+                            <Content className="flex-1 overflow-y-auto">
                                 {children}
                             </Content>
                         </Layout>
