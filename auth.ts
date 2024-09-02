@@ -31,7 +31,7 @@ const providers = [
     GitHubProvider,
 ];
 
-interface UserInterface extends NextAuthUser{
+export interface UserInterface extends NextAuthUser{
     userId ?: string
 }
 
@@ -65,7 +65,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         async session({ session, token }: { session: any, token: any }) {
             // Attach MongoDB ID to the session object
             if (token?.userId) {
-                session.user.userId = token.userId;
+                session.user.id = token.userId;
             }
             // console.log(session);
             return session;
