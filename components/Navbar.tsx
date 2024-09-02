@@ -14,30 +14,34 @@ const navitems = [
         key: "jobs",
         children: [
             { type: "group", label: <Link href="/jobs">All Jobs</Link> },
+            // {
+            //     type: "group",
+            //     label: <Link href="/jobs?applied=true">Applied Jobs</Link>,
+            // },
             {
                 type: "group",
-                label: <Link href="/jobs?applied=true">Applied Jobs</Link>,
+                label: <Link href="/jobs/create">Create Job</Link>,
             },
         ],
     },
-    {
-        label: "Referrals",
-        key: "referrals",
-        children: [
-            {
-                type: "group",
-                label: <Link href="/referrals">All Referrals</Link>,
-            },
-            {
-                type: "group",
-                label: (
-                    <Link href="/referrals?applied=true">
-                        Applied Referrals
-                    </Link>
-                ),
-            },
-        ],
-    },
+    // {
+    //     label: "Referrals",
+    //     key: "referrals",
+    //     children: [
+    //         {
+    //             type: "group",
+    //             label: <Link href="/referrals">All Referrals</Link>,
+    //         },
+    //         {
+    //             type: "group",
+    //             label: (
+    //                 <Link href="/referrals?applied=true">
+    //                     Applied Referrals
+    //                 </Link>
+    //             ),
+    //         },
+    //     ],
+    // },
 ];
 
 export default async function Navbar() {
@@ -69,7 +73,7 @@ export default async function Navbar() {
                                 {
                                     type: "group",
 
-                                    label: <Link href="/profile">Profile</Link>,
+                                    label: (<Link href="/profile">Profile</Link>),
                                 },
                                 {
                                     type: "group",
