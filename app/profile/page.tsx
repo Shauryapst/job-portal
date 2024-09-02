@@ -13,7 +13,7 @@ export const updateProfile = async (data: any) => {
             Object.entries(data).filter(([key, value]) => value !== undefined)
         );
         const { email } = data;
-        console.log(filteredData);
+        
         await connectDB();
         await User.findOneAndUpdate(
             { email: email },
