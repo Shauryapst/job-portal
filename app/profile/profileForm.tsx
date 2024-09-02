@@ -87,7 +87,7 @@ export default function ProfileForm({user} : any) {
                 <Form.Item name="github" label="GitHub" rules={[{ type: 'url', warningOnly: true }]}>
                     <Input placeholder={user?.github ? user.github : "GitHub Url"} />
                 </Form.Item>
-                <Form.Item>
+                <Form.Item name="button">
                     <Button type="primary" htmlType="submit">
                         Submit
                     </Button>
