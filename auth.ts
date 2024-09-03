@@ -3,8 +3,7 @@ import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { User as NextAuthUser, Profile, Account } from "next-auth";
-import User from "./models/user";
-import { connectDB } from "./lib/mongoose";
+import prisma from "@/prisma/prismaClient";
 
 const providers = [
     // Credentials({
@@ -31,8 +30,8 @@ const providers = [
     GitHubProvider,
 ];
 
-export interface UserInterface extends NextAuthUser{
-    userId ?: string
+export interface UserInterface extends NextAuthUser {
+    userId?: string;
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -42,27 +41,35 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     providers: providers,
     callbacks: {
-        async signIn({ user, account }: { user: UserInterface, account:any }) {
+        async signIn({ user, account }: { user: UserInterface; account: any }) {
             try {
-                // Connect to the database
-                await connectDB();
-                // console.log(user);
-                // console.log(account);
+                
+                await prisma.$connect();
+                let existingUser = await prisma.user.findUnique({
+                    where: { email : user.email || "" },
+                });
 
-                // Check if the user exists in the database
-                let existingUser = await User.findOne({ email: user.email });
-
-                if (!existingUser) {
-                    existingUser =  await User.create({ email: user.email });
+                if(!user?.email){
+                    return false;
                 }
-                // console.log(existingUser._id.toString());
-                user.userId = existingUser._id.toString();
+                
+                if (!existingUser) {
+                    existingUser = await prisma.user.create({
+                        data: {
+                            email: user.email,
+                        },
+                    });
+                    
+                }
+                // console.log(existingUser);
+                user.userId = existingUser.id;
+
                 return true;
             } catch (err) {
                 return false;
             }
         },
-        async session({ session, token }: { session: any, token: any }) {
+        async session({ session, token }: { session: any; token: any }) {
             // Attach MongoDB ID to the session object
             if (token?.userId) {
                 session.user.id = token.userId;
@@ -70,7 +77,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             // console.log(session);
             return session;
         },
-        async jwt({ token, user }: { token: any, user?: UserInterface }) {
+        async jwt({ token, user }: { token: any; user?: UserInterface }) {
             if (user) {
                 token.userId = user.userId;
             }

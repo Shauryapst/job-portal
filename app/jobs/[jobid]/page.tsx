@@ -26,7 +26,7 @@ const JobPage = ({ params }: { params: { jobid: string } }) => {
         };
 
         fetchJob();
-    }, []);
+    }, [params.jobid]);
 
     if (loading) {
         return (

@@ -1,16 +1,26 @@
 "use server";
 import { auth } from "@/auth";
-import { connectDB } from "@/lib/mongoose";
-import JobReferral from "@/models/job";
+import prisma from "@/prisma/prismaClient";
 
 export async function getJobData(jobId: string) {
     try {
-        
-        await connectDB();
-        const jobData = await JobReferral.findById(jobId)
-            .populate("createdBy", "email phone")
-            .lean();
-       
+        await prisma.$connect();
+
+        const jobData = await prisma.jobReferral.findUnique({
+            where: {
+                id: jobId,
+            },
+            include: {
+                createdBy: {
+                    select: {
+                        email: true,
+                        phone: true,
+                    },
+                },
+            },
+        });
+
+        console.log("jobData", jobData);
 
         return jobData;
     } catch (error) {

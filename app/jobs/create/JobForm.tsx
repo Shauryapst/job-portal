@@ -13,18 +13,17 @@ import {
 const { TextArea } = Input;
 import { useState } from "react";
 import { tech_tags } from "./techlist";
-import { createEditJob } from "./page";
+import { createEditJob } from "../utils/jobAction";
 import { navigation } from "./actions";
-import { IJobReferral } from "@/models/job";
 
 export default function JobForm(job : any) {
     
-    const [minExp, setMinExp] = useState(job?.experience[0] || 1);
-    const [maxExp, setMaxExp] = useState(job?.experience[1] || 5);
-    const [disableExp, setDisableExp] = useState(job?.experience.length ? true : false);
-    const [disableSalary, setDisableSalary] = useState(job?.salary.length ? true : false);
-    const [minSalary, setMinSalary] = useState(job?.salary[0] || 10);
-    const [maxSalary, setMaxSalary] = useState(job?.salary[1] || 20);
+    const [minExp, setMinExp] = useState(job?.experience?.[0] || 1);
+    const [maxExp, setMaxExp] = useState(job?.experience?.[1] || 5);
+    const [disableExp, setDisableExp] = useState(!!job?.experience?.length);
+    const [disableSalary, setDisableSalary] = useState(!!job?.salary?.length);
+    const [minSalary, setMinSalary] = useState(job?.salary?.[0] || 10);
+    const [maxSalary, setMaxSalary] = useState(job?.salary?.[1] || 20);
     const [api, contextHolder] = notification.useNotification();
 
     const sliderChange = (newValue: number[]) => {

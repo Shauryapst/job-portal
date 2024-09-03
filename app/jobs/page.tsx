@@ -1,21 +1,10 @@
 import JobCard from "@/components/JobCard";
-import { connectDB } from "@/lib/mongoose";
-import JobReferral from "@/models/job";
 import { PlusSquareOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import Link from "next/link";
 import { Suspense } from "react";
+import { fetchJobs } from "./utils/jobAction";
 
-export async function fetchJobs(page: number, limit: number) {
-    await connectDB();
-    const jobList = await JobReferral.find()
-        .populate("createdBy", "email")
-        .sort({createdAt : -1})
-        .skip((page - 1) * limit)
-        .limit(limit) // Limit the number of jobs returned
-        .lean();
-    return jobList;
-}
 
 export default async function AllJobPage() {
     let jobList = await fetchJobs(1, 100);
@@ -32,8 +21,8 @@ export default async function AllJobPage() {
             <Suspense>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-full">
                     {jobList.map((job) => (
-                        <Link href={`/jobs/${job._id}`}>
-                            <JobCard job={JSON.stringify(job)} key={job._id} />
+                        <Link key={job.id} href={`/jobs/${job.id}`}>
+                            <JobCard job={JSON.stringify(job)}  />
                         </Link>
                     ))}
                 </div>

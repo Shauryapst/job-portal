@@ -2,7 +2,8 @@
 
 import { Form, Input, Button, notification } from "antd";
 import { useState, useEffect } from "react";
-import { updateProfile } from "./page";  // Import the server action
+import {  } from "./page";  // Import the server action
+import { updateProfile } from "./utils/profileAction";
 
 export default function ProfileForm({user} : any) {
     const [editEnabled, setEditEnabled] = useState(true);
