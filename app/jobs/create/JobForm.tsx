@@ -14,7 +14,7 @@ const { TextArea } = Input;
 import { useState } from "react";
 import { tech_tags } from "./techlist";
 import { createEditJob } from "../utils/jobAction";
-import { navigation } from "./actions";
+import { navigation } from "../utils/jobAction";
 
 export default function JobForm(job : any) {
     
@@ -63,7 +63,7 @@ export default function JobForm(job : any) {
                 message: "Success",
                 description: "Job created successfully.",
             });
-            navigation();
+            navigation('/jobs');
         } catch (err) {
             console.error(err);
             api.error({
