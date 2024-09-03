@@ -2,23 +2,31 @@ import { auth } from "@/auth";
 import prisma from "@/prisma/prismaClient";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+interface JobData {
+    organization: string;
+    description: string;
+    designation: string;
+    tech_tag: string[];
+    experience?: number[];
+    salary?: number[];
+    jobUrl?: string;
+    relatedImg?: string[];
+}
 
-const createEditJob = async (data: any) => {
+const createEditJob = async (data:JobData) => {
     try {
         const session = await auth();
-        const userId = session?.user?.id;
+        let userId : string | undefined = session?.user?.id;
 
         if (!userId) {
             throw new Error("User ID is not defined.");
         }
 
-        const filteredData = Object.fromEntries(
-            Object.entries(data).filter(([key, value]) => value !== undefined)
-        );
 
         const jobData = {
-            ...filteredData,
-            createdById: userId.toString(),
+            ...data,
+            
+            createdBy : { connect: { id: userId } },
         };
 
         const jobReferral = await prisma.jobReferral.create({
