@@ -19,9 +19,6 @@ export async function getJobData(jobId: string) {
                 },
             },
         });
-
-        console.log("jobData", jobData);
-
         return jobData;
     } catch (error) {
         console.error("Error fetching job data:", error);

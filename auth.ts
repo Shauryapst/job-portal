@@ -2,8 +2,9 @@ import NextAuth from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
-import { User as NextAuthUser, Profile, Account } from "next-auth";
+import { User as NextAuthUser } from "next-auth";
 import prisma from "@/prisma/prismaClient";
+
 
 const providers = [
     // Credentials({

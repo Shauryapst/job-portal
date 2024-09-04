@@ -8,22 +8,24 @@ import {
     InputNumber,
     Select,
     Slider,
+    Upload,
     notification,
 } from "antd";
 const { TextArea } = Input;
 import { useState } from "react";
 import { tech_tags } from "./techlist";
-import { createEditJob } from "../utils/jobAction";
-import { navigation } from "../utils/jobAction";
+import { uploadJobImage} from "../utils/jobAction";
+import { UploadOutlined } from "@ant-design/icons";
+import { createEditJob, navigation } from "../utils/createEditJob";
 
-export default function JobForm(job : any) {
-    
+export default function JobForm(job: any) {
     const [minExp, setMinExp] = useState(job?.experience?.[0] || 1);
     const [maxExp, setMaxExp] = useState(job?.experience?.[1] || 5);
     const [disableExp, setDisableExp] = useState(!!job?.experience?.length);
     const [disableSalary, setDisableSalary] = useState(!!job?.salary?.length);
     const [minSalary, setMinSalary] = useState(job?.salary?.[0] || 10);
     const [maxSalary, setMaxSalary] = useState(job?.salary?.[1] || 20);
+    const [fileList, setFileList] = useState<any[]>([]);
     const [api, contextHolder] = notification.useNotification();
 
     const sliderChange = (newValue: number[]) => {
@@ -50,27 +52,58 @@ export default function JobForm(job : any) {
 
     const onFinish = async (values: any) => {
         try {
-            const data = { ...values };
+            let uploadedFileUrls : any = [];
+
+            if (fileList.length > 0) {
+                const { status, data } = await uploadJobImage(fileList);
+
+                if (status) {
+                    uploadedFileUrls= data;
+                } else {
+                    api.error({
+                        message: "Upload Error",
+                        description: data,
+                    });
+                    return;
+                }
+            }
+            let data = {
+                ...values,
+                relatedImg: uploadedFileUrls,
+            };
             if (!disableExp) {
                 data["experience"] = [minExp, maxExp];
             }
-            if (!disableExp) {
+            if (!disableSalary) {
                 data["salary"] = [minSalary, maxSalary];
             }
-
-            await createEditJob({ ...data });
+            await createEditJob(data);
             api.success({
                 message: "Success",
                 description: "Job created successfully.",
             });
-            navigation('/jobs');
+            navigation("/jobs");
         } catch (err) {
-            console.error(err);
             api.error({
                 message: "Error",
-                description: "There was an error while creating Job",
+                description: "There was an error while creating the job",
             });
         }
+    };
+
+    const uploadProps = {
+        name: "file",
+        multiple: true,
+        accept : "image/*",
+
+        beforeUpload: (file: any) => {
+            setFileList((prev) => [...prev, file]);
+            return false;
+        },
+        onRemove: (file: any) => {
+            setFileList((prev) => prev.filter((item) => item.uid !== file.uid));
+        },
+        fileList,
     };
 
     return (
@@ -173,7 +206,7 @@ export default function JobForm(job : any) {
                     />
                 </Form.Item>
                 <Divider />
-                <Form.Item name="experience" label="Experience">
+                <Form.Item label="Experience">
                     <Checkbox
                         onChange={(e) => {
                             setDisableExp(!disableExp);
@@ -218,7 +251,7 @@ export default function JobForm(job : any) {
                     </div>
                 </Form.Item>
                 <Divider />
-                <Form.Item name="salary" label="Salary(LPA)">
+                <Form.Item label="Salary(LPA)">
                     <Checkbox
                         onChange={(e) => {
                             setDisableSalary(!disableSalary);
@@ -262,15 +295,13 @@ export default function JobForm(job : any) {
                     </div>
                 </Form.Item>
                 <Divider />
-                <Form.Item name="images" label="Images">
-                    <Input
-                        disabled={true}
-                        placeholder="Will Add the Function"
-                    />
+                <Form.Item label="Images">
+                    <Upload {...uploadProps}>
+                        <Button icon={<UploadOutlined />}>Upload</Button>
+                    </Upload>
                 </Form.Item>
                 <Divider />
-                <Form.Item name="submitButton">
-                    
+                <Form.Item>
                     <Button htmlType="submit" type="primary">
                         Submit
                     </Button>

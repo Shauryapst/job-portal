@@ -1,46 +1,5 @@
-import { auth } from "@/auth";
 import prisma from "@/prisma/prismaClient";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-interface JobData {
-    organization: string;
-    description: string;
-    designation: string;
-    tech_tag: string[];
-    experience?: number[];
-    salary?: number[];
-    jobUrl?: string;
-    relatedImg?: string[];
-}
-
-const createEditJob = async (data:JobData) => {
-    try {
-        const session = await auth();
-        let userId : string | undefined = session?.user?.id;
-
-        if (!userId) {
-            throw new Error("User ID is not defined.");
-        }
-
-
-        const jobData = {
-            ...data,
-            
-            createdBy : { connect: { id: userId } },
-        };
-
-        const jobReferral = await prisma.jobReferral.create({
-            data: jobData,
-        });
-
-        revalidatePath("/jobs");
-
-        return jobReferral;
-    } catch (err) {
-        console.error("Error in createEditJob:", err);
-        throw new Error("Failed to create job");
-    }
-};
+import s3 from "@/aws-config";
 
 const fetchJobs = async (page: number, limit: number) => {
     await prisma.$connect();
@@ -61,8 +20,41 @@ const fetchJobs = async (page: number, limit: number) => {
     return jobList;
 };
 
-const navigation = (url : string) => {
-    redirect(url);
+const uploadJobImage = async (files: any[]) => {
+    try {
+        const uploadFile = async (file: any) => {
+            const params: any = {
+                Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME,
+                Key: `${Date.now()}_${file.name}`,
+                Body: file,
+                ContentType: file.type,
+                ACL: "public-read",
+            };
+
+            try {
+                const { Location } = await s3.upload(params).promise();
+                return Location;
+            } catch (error) {
+                throw new Error("Error while uploading image file.");
+            }
+        };
+
+        const uploadedFiles = [];
+
+        // Upload files sequentially
+        for (const file of files) {
+            const uploadedFileUrl = await uploadFile(file);
+            uploadedFiles.push(uploadedFileUrl);
+        }
+
+        return { status: true, data: uploadedFiles };
+    } catch (err) {
+        console.error(err);
+        return {
+            status: false,
+            message: "Error while uploading image files, Please try again",
+        };
+    }
 };
 
-export { navigation, createEditJob, fetchJobs };
+export { fetchJobs, uploadJobImage };
