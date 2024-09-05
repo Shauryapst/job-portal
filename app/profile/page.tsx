@@ -15,7 +15,7 @@ export default async function ProfilePage() {
 
     return (
         <div className="w-full h-full justify-center flex items-center">
-            <div className="w-6/12 text-white flex flex-col items-center">
+            <div className="w-full text-white flex flex-col items-center">
                 <Suspense>
                     <ProfileForm user={existingUser} />
                 </Suspense>
