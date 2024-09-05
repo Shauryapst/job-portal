@@ -22,6 +22,8 @@ const fetchJobs = async (page: number, limit: number) => {
 
 const uploadJobImage = async (files: any[]) => {
     try {
+        console.log(s3)
+        test();
         const uploadFile = async (file: any) => {
             const params: any = {
                 Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME,
